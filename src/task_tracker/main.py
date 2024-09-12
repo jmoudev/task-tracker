@@ -1,9 +1,8 @@
 import argparse
-import datetime
 import os
 import pprint
 
-import utils
+import task_tracker.utils as utils
 
 
 JSON_FILENAME = "tasks.json"
@@ -13,7 +12,7 @@ JSON_FILEPATH = os.path.join(os.curdir, JSON_FILENAME)
 def add_task(json_filepath, description):
     tasks_json = utils.read_json(json_filepath)
     _id = tasks_json["metadata"]["num_tasks"] + 1
-    created_timestamp = datetime.datetime.now().isoformat()
+    created_timestamp = utils.get_iso_datetime()
     tasks_json["metadata"]["num_tasks"] += 1
     # json writes dict keys as str
     task = {
