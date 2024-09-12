@@ -17,13 +17,11 @@ def read_json(json_filepath):
 def write_json(json_filepath, json_data):
     with open(json_filepath, "w") as json_fp:
         json.dump(json_data, json_fp)
-    return
 
 
 def create_tasks_json(json_filepath):
-    tasks_json = {"metadata": {"num_tasks": 0}, "tasks": []}
+    tasks_json = {"metadata": {"num_tasks": 0}, "tasks": {}}
     write_json(json_filepath, tasks_json)
-    return
 
 
 def get_iso_datetime():
@@ -34,50 +32,38 @@ def add_task(json_filepath, description):
     tasks_json = read_json(json_filepath)
     _id = tasks_json["metadata"]["num_tasks"] + 1
     created_timestamp = datetime.datetime.now().isoformat()
-    tasks_json["metadata"]["num_tasks"] = tasks_json["metadata"]["num_tasks"] + 1
-    tasks_json["tasks"].append(
-        {
-            "id": _id,
-            "description": description,
-            "status": "todo",
-            "createdAt": created_timestamp,
-            "updatedAt": created_timestamp,
-        }
-    )
+    tasks_json["metadata"]["num_tasks"] += 1
+    # json writes dict keys as str
+    tasks_json["tasks"][str(_id)] = {
+        "id": _id,
+        "description": description,
+        "status": "todo",
+        "createdAt": created_timestamp,
+        "updatedAt": created_timestamp,
+    }
     write_json(json_filepath, tasks_json)
-    return
 
 
 def update_task(json_filepath, _id, description):
     tasks_json = read_json(json_filepath)
-    for task in tasks_json["tasks"]:
-        if task["id"] == _id:
-            task["description"] = description
-            task["updatedAt"] = get_iso_datetime()
-            break
+    task = tasks_json["tasks"][str(_id)]
+    task["description"] = description
+    task["updatedAt"] = get_iso_datetime()
     write_json(json_filepath, tasks_json)
-    return
 
 
 def delete_task(json_filepath, _id):
     tasks_json = read_json(json_filepath)
-    for i, task in enumerate(tasks_json["tasks"]):
-        if task["id"] == _id:
-            tasks_json["tasks"].pop(i)
-            break
+    del tasks_json["tasks"][str(_id)]
     write_json(json_filepath, tasks_json)
-    return
 
 
 def mark_task_status(json_filepath, _id, status):
     tasks_json = read_json(json_filepath)
-    for i, task in enumerate(tasks_json["tasks"]):
-        if task["id"] == _id:
-            task["status"] = status
-            task["updatedAt"] = get_iso_datetime()
-            break
+    task = tasks_json["tasks"][str(_id)]
+    task["status"] = status
+    task["updatedAt"] = get_iso_datetime()
     write_json(json_filepath, tasks_json)
-    return
 
 
 def list_tasks(json_filepath, status):
@@ -91,7 +77,7 @@ def list_tasks(json_filepath, status):
 def main():
     # create the json file if doesn't exist
     if not os.path.isfile(JSON_FILEPATH):
-        write_json(JSON_FILEPATH, {"metadata": {"num_tasks": 0}, "tasks": []})
+        create_tasks_json(JSON_FILEPATH)
 
     # parse cli args
     parser = argparse.ArgumentParser(

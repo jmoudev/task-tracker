@@ -28,16 +28,16 @@ class TestTaskAdd(TestTaskOperation):
         tasks_json = main.read_json(self.tasks_json_filepath)
         self.assertEqual(tasks_json["metadata"]["num_tasks"], 1)
         self.assertEqual(len(tasks_json["tasks"]), 1)
-        self.assertEqual(tasks_json["tasks"][0]["id"], 1)
-        self.assertEqual(tasks_json["tasks"][0]["description"], "A task")
-        self.assertEqual(tasks_json["tasks"][0]["status"], "todo")
+        self.assertEqual(tasks_json["tasks"]["1"]["id"], 1)
+        self.assertEqual(tasks_json["tasks"]["1"]["description"], "A task")
+        self.assertEqual(tasks_json["tasks"]["1"]["status"], "todo")
         # test add task 2
         main.add_task(self.tasks_json_filepath, "Another task")
         tasks_json = main.read_json(self.tasks_json_filepath)
         self.assertEqual(tasks_json["metadata"]["num_tasks"], 2)
         self.assertEqual(len(tasks_json["tasks"]), 2)
-        self.assertEqual(tasks_json["tasks"][1]["id"], 2)
-        self.assertEqual(tasks_json["tasks"][1]["description"], "Another task")
+        self.assertEqual(tasks_json["tasks"]["2"]["id"], 2)
+        self.assertEqual(tasks_json["tasks"]["2"]["description"], "Another task")
         return
 
 
@@ -50,20 +50,20 @@ class TestWithPredefinedTasks(TestTaskOperation):
         main.write_json(
             self.tasks_json_filepath,
             {
-                "tasks": [
-                    {
+                "tasks": {
+                    "1": {
                         "id": 1,
                         "description": "A task",
                         "status": "todo",
                         "updatedAt": main.get_iso_datetime(),
                     },
-                    {
+                    "2": {
                         "id": 2,
                         "description": "Another task",
                         "status": "todo",
                         "updatedAt": main.get_iso_datetime(),
                     },
-                ]
+                }
             },
         )
         return
@@ -75,11 +75,11 @@ class TestTaskUpdate(TestWithPredefinedTasks):
         tasks_json_pre_update = main.read_json(self.tasks_json_filepath)
         main.update_task(self.tasks_json_filepath, 1, "An updated task")
         tasks_json = main.read_json(self.tasks_json_filepath)
-        self.assertEqual(tasks_json["tasks"][0]["id"], 1)
-        self.assertEqual(tasks_json["tasks"][0]["description"], "An updated task")
+        self.assertEqual(tasks_json["tasks"]["1"]["id"], 1)
+        self.assertEqual(tasks_json["tasks"]["1"]["description"], "An updated task")
         self.assertGreater(
-            tasks_json["tasks"][0]["updatedAt"],
-            tasks_json_pre_update["tasks"][0]["updatedAt"],
+            tasks_json["tasks"]["1"]["updatedAt"],
+            tasks_json_pre_update["tasks"]["1"]["updatedAt"],
         )
         return
 
@@ -99,10 +99,10 @@ class TestTaskDelete(TestWithPredefinedTasks):
 class TestTasksMarkStatus(TestWithPredefinedTasks):
     def test_task_mark_in_progress(self):
         task_without_marked_status = main.read_json(self.tasks_json_filepath)["tasks"][
-            0
+            "1"
         ]
         main.mark_task_status(self.tasks_json_filepath, 1, "in-progress")
-        task_marked_in_progress = main.read_json(self.tasks_json_filepath)["tasks"][0]
+        task_marked_in_progress = main.read_json(self.tasks_json_filepath)["tasks"]["1"]
         self.assertEqual(task_without_marked_status["status"], "todo")
         self.assertEqual(task_marked_in_progress["status"], "in-progress")
         self.assertGreater(
@@ -113,10 +113,10 @@ class TestTasksMarkStatus(TestWithPredefinedTasks):
 
     def test_task_mark_done(self):
         task_without_marked_status = main.read_json(self.tasks_json_filepath)["tasks"][
-            0
+            "1"
         ]
         main.mark_task_status(self.tasks_json_filepath, 1, "done")
-        task_marked_done = main.read_json(self.tasks_json_filepath)["tasks"][0]
+        task_marked_done = main.read_json(self.tasks_json_filepath)["tasks"]["1"]
         self.assertEqual(task_without_marked_status["status"], "todo")
         self.assertEqual(task_marked_done["status"], "done")
         self.assertGreater(
