@@ -28,7 +28,7 @@ class TestTaskAdd(TestTaskOperation):
         tasks_file = tasks.TasksFile(self.tasks_json_filepath)
         tasks_file.add_task("A task")
         tasks_json = utils.read_json(self.tasks_json_filepath)
-        self.assertEqual(tasks_json["metadata"]["num_tasks"], 1)
+        self.assertEqual(tasks_json["metadata"]["task_counter"], 1)
         self.assertEqual(len(tasks_json["tasks"]), 1)
         self.assertEqual(tasks_json["tasks"]["1"]["id"], 1)
         self.assertEqual(tasks_json["tasks"]["1"]["description"], "A task")
@@ -36,7 +36,7 @@ class TestTaskAdd(TestTaskOperation):
         # test add task 2
         tasks_file.add_task("Another task")
         tasks_json = utils.read_json(self.tasks_json_filepath)
-        self.assertEqual(tasks_json["metadata"]["num_tasks"], 2)
+        self.assertEqual(tasks_json["metadata"]["task_counter"], 2)
         self.assertEqual(len(tasks_json["tasks"]), 2)
         self.assertEqual(tasks_json["tasks"]["2"]["id"], 2)
         self.assertEqual(tasks_json["tasks"]["2"]["description"], "Another task")

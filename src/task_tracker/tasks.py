@@ -62,10 +62,10 @@ class TasksFile:
 
     # TODO: merge add task and update task
     def add_task(self, description):
-        task_id = self.metadata["num_tasks"] + 1
+        task_id = self.metadata.get("task_counter", 0) + 1
         task_dict = Task(task_id, description).to_dict()
         self.tasks[str(task_id)] = task_dict
-        self.metadata["num_tasks"] += 1
+        self.metadata["task_counter"] = task_id
         self._save()
         return task_dict
 

@@ -3,7 +3,6 @@ import os
 import pprint
 
 import task_tracker.tasks as tasks
-import task_tracker.utils as utils
 
 
 JSON_FILENAME = "tasks.json"
@@ -11,9 +10,6 @@ JSON_FILEPATH = os.path.join(os.curdir, JSON_FILENAME)
 
 
 def main(json_filepath=JSON_FILEPATH):
-    if not os.path.isfile(json_filepath):
-        utils.create_tasks_json(json_filepath)
-
     parser = argparse.ArgumentParser(
         prog="task-cli", description="To-do list cli application"
     )
