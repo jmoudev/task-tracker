@@ -91,12 +91,10 @@ class TestTaskDelete(TestWithPredefinedTasks):
 
 class TestTasksMarkStatus(TestWithPredefinedTasks):
     def test_task_mark_in_progress(self):
-        # check task is todo status
         task_without_marked_status = main.read_json(self.tasks_json_filepath)["tasks"][
             0
         ]
         main.mark_task_status(self.tasks_json_filepath, 1, "in-progress")
-        # check task is mark_in_progress status
         task_marked_in_progress = main.read_json(self.tasks_json_filepath)["tasks"][0]
         self.assertEqual(task_without_marked_status["status"], "todo")
         self.assertEqual(task_marked_in_progress["status"], "in-progress")
@@ -107,10 +105,9 @@ class TestTasksMarkStatus(TestWithPredefinedTasks):
             0
         ]
         main.mark_task_status(self.tasks_json_filepath, 1, "done")
-        # check task is mark_in_progress status
-        task_marked_in_progress = main.read_json(self.tasks_json_filepath)["tasks"][0]
+        task_marked_done = main.read_json(self.tasks_json_filepath)["tasks"][0]
         self.assertEqual(task_without_marked_status["status"], "todo")
-        self.assertEqual(task_marked_in_progress["status"], "done")
+        self.assertEqual(task_marked_done["status"], "done")
         return
 
 
