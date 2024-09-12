@@ -26,6 +26,10 @@ def create_tasks_json(json_filepath):
     return
 
 
+def get_iso_datetime():
+    return datetime.datetime.now().isoformat()
+
+
 def add_task(json_filepath, description):
     tasks_json = read_json(json_filepath)
     _id = tasks_json["metadata"]["num_tasks"] + 1
@@ -49,6 +53,7 @@ def update_task(json_filepath, _id, description):
     for task in tasks_json["tasks"]:
         if task["id"] == _id:
             task["description"] = description
+            task["updatedAt"] = get_iso_datetime()
             break
     write_json(json_filepath, tasks_json)
     return
@@ -69,6 +74,7 @@ def mark_task_status(json_filepath, _id, status):
     for i, task in enumerate(tasks_json["tasks"]):
         if task["id"] == _id:
             task["status"] = status
+            task["updatedAt"] = get_iso_datetime()
             break
     write_json(json_filepath, tasks_json)
     return
