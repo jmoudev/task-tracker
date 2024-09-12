@@ -91,6 +91,7 @@ def main():
     parser = argparse.ArgumentParser(
         prog="task-cli", description="To-do list cli application"
     )
+    parser.set_defaults(which=None)
     subparsers = parser.add_subparsers()
     # add
     task_adder = subparsers.add_parser("add")
@@ -131,6 +132,9 @@ def main():
             return mark_task_status(JSON_FILEPATH, args.id, "done")
         case "list":
             return list_tasks(JSON_FILEPATH, args.status)
+        case None:
+            parser.print_help()
+            return
     return
 
 
