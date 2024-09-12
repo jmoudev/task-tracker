@@ -3,6 +3,7 @@ import tempfile
 import unittest
 
 import main
+import utils
 
 
 class TestTaskOperation(unittest.TestCase):
@@ -13,7 +14,7 @@ class TestTaskOperation(unittest.TestCase):
         self.tasks_json_filepath = os.path.join(
             self.tempdir.name, self.TASKS_JSON_FILENAME
         )
-        main.create_tasks_json(self.tasks_json_filepath)
+        utils.create_tasks_json(self.tasks_json_filepath)
         return
 
     def tearDown(self):
@@ -25,7 +26,7 @@ class TestTaskAdd(TestTaskOperation):
     def test_task_add(self):
         # test add task 1
         main.add_task(self.tasks_json_filepath, "A task")
-        tasks_json = main.read_json(self.tasks_json_filepath)
+        tasks_json = utils.read_json(self.tasks_json_filepath)
         self.assertEqual(tasks_json["metadata"]["num_tasks"], 1)
         self.assertEqual(len(tasks_json["tasks"]), 1)
         self.assertEqual(tasks_json["tasks"]["1"]["id"], 1)
@@ -33,7 +34,7 @@ class TestTaskAdd(TestTaskOperation):
         self.assertEqual(tasks_json["tasks"]["1"]["status"], "todo")
         # test add task 2
         main.add_task(self.tasks_json_filepath, "Another task")
-        tasks_json = main.read_json(self.tasks_json_filepath)
+        tasks_json = utils.read_json(self.tasks_json_filepath)
         self.assertEqual(tasks_json["metadata"]["num_tasks"], 2)
         self.assertEqual(len(tasks_json["tasks"]), 2)
         self.assertEqual(tasks_json["tasks"]["2"]["id"], 2)
@@ -47,7 +48,7 @@ class TestWithPredefinedTasks(TestTaskOperation):
         self.tasks_json_filepath = os.path.join(
             self.tempdir.name, self.TASKS_JSON_FILENAME
         )
-        main.write_json(
+        utils.write_json(
             self.tasks_json_filepath,
             {
                 "tasks": {
@@ -55,13 +56,13 @@ class TestWithPredefinedTasks(TestTaskOperation):
                         "id": 1,
                         "description": "A task",
                         "status": "todo",
-                        "updatedAt": main.get_iso_datetime(),
+                        "updatedAt": utils.get_iso_datetime(),
                     },
                     "2": {
                         "id": 2,
                         "description": "Another task",
                         "status": "todo",
-                        "updatedAt": main.get_iso_datetime(),
+                        "updatedAt": utils.get_iso_datetime(),
                     },
                 }
             },
@@ -72,9 +73,9 @@ class TestWithPredefinedTasks(TestTaskOperation):
 class TestTaskUpdate(TestWithPredefinedTasks):
     def test_task_update(self):
         # test update task
-        tasks_json_pre_update = main.read_json(self.tasks_json_filepath)
+        tasks_json_pre_update = utils.read_json(self.tasks_json_filepath)
         main.update_task(self.tasks_json_filepath, 1, "An updated task")
-        tasks_json = main.read_json(self.tasks_json_filepath)
+        tasks_json = utils.read_json(self.tasks_json_filepath)
         self.assertEqual(tasks_json["tasks"]["1"]["id"], 1)
         self.assertEqual(tasks_json["tasks"]["1"]["description"], "An updated task")
         self.assertGreater(
@@ -87,9 +88,9 @@ class TestTaskUpdate(TestWithPredefinedTasks):
 class TestTaskDelete(TestWithPredefinedTasks):
     def test_task_delete(self):
         # test delete task
-        tasks_json_pre_delete = main.read_json(self.tasks_json_filepath)
+        tasks_json_pre_delete = utils.read_json(self.tasks_json_filepath)
         main.delete_task(self.tasks_json_filepath, 1)
-        tasks_json = main.read_json(self.tasks_json_filepath)
+        tasks_json = utils.read_json(self.tasks_json_filepath)
         self.assertEqual(len(tasks_json_pre_delete["tasks"]), 2)
         self.assertEqual(len(tasks_json["tasks"]), 1)
         main.delete_task(self.tasks_json_filepath, 2)
@@ -98,11 +99,13 @@ class TestTaskDelete(TestWithPredefinedTasks):
 
 class TestTasksMarkStatus(TestWithPredefinedTasks):
     def test_task_mark_in_progress(self):
-        task_without_marked_status = main.read_json(self.tasks_json_filepath)["tasks"][
+        task_without_marked_status = utils.read_json(self.tasks_json_filepath)["tasks"][
             "1"
         ]
         main.mark_task_status(self.tasks_json_filepath, 1, "in-progress")
-        task_marked_in_progress = main.read_json(self.tasks_json_filepath)["tasks"]["1"]
+        task_marked_in_progress = utils.read_json(self.tasks_json_filepath)["tasks"][
+            "1"
+        ]
         self.assertEqual(task_without_marked_status["status"], "todo")
         self.assertEqual(task_marked_in_progress["status"], "in-progress")
         self.assertGreater(
@@ -112,11 +115,11 @@ class TestTasksMarkStatus(TestWithPredefinedTasks):
         return
 
     def test_task_mark_done(self):
-        task_without_marked_status = main.read_json(self.tasks_json_filepath)["tasks"][
+        task_without_marked_status = utils.read_json(self.tasks_json_filepath)["tasks"][
             "1"
         ]
         main.mark_task_status(self.tasks_json_filepath, 1, "done")
-        task_marked_done = main.read_json(self.tasks_json_filepath)["tasks"]["1"]
+        task_marked_done = utils.read_json(self.tasks_json_filepath)["tasks"]["1"]
         self.assertEqual(task_without_marked_status["status"], "todo")
         self.assertEqual(task_marked_done["status"], "done")
         self.assertGreater(
@@ -131,7 +134,7 @@ class TestWithPredefinedMarkedTasks(TestTaskOperation):
         self.tasks_json_filepath = os.path.join(
             self.tempdir.name, self.TASKS_JSON_FILENAME
         )
-        main.write_json(
+        utils.write_json(
             self.tasks_json_filepath,
             {
                 "tasks": [
