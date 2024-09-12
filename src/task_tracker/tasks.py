@@ -46,14 +46,16 @@ class TasksFile:
     def __init__(self, filepath):
         self.filepath = filepath
         self.filename = os.path.basename(filepath)
-        tasks_obj = utils.read_json(filepath)
+        if not os.path.isfile(filepath):
+            tasks_obj = {}
+        else:
+            tasks_obj = utils.read_json(filepath)
         self.metadata = tasks_obj.get("metadata", {})
-        self.tasks = tasks_obj.get("tasks", [])
+        self.tasks = tasks_obj.get("tasks", {})
 
     def _get_task_by_id(self, _id):
         return Task.from_dict(self.tasks[str(_id)])
 
-    # TODO: merge add task and update task
     def add_task(self, description):
         task_id = self.metadata.get("task_counter", 0) + 1
         task_dict = Task(task_id, description).to_dict()
@@ -84,7 +86,7 @@ class TasksFile:
     def list_tasks_by_status(self, status):
         return [
             task
-            for _, task in self.tasks.items()
+            for task in self.tasks.values()
             if not status or task["status"] == status
         ]
 
