@@ -95,23 +95,23 @@ def main():
     subparsers = parser.add_subparsers()
     # add
     task_adder = subparsers.add_parser("add")
-    task_adder.add_argument("description")
+    task_adder.add_argument("description", type=str)
     task_adder.set_defaults(which="add")
     # update
     task_updater = subparsers.add_parser("update")
-    task_updater.add_argument("id")
-    task_updater.add_argument("description")
+    task_updater.add_argument("id", type=int)
+    task_updater.add_argument("description", type=str)
     task_updater.set_defaults(which="update")
     # delete
     task_deleter = subparsers.add_parser("delete")
-    task_deleter.add_argument("id")
+    task_deleter.add_argument("id", type=int)
     task_deleter.set_defaults(which="delete")
     # mark-in-progress
     task_mark_in_progress = subparsers.add_parser("mark-in-progress")
-    task_mark_in_progress.add_argument("id")
+    task_mark_in_progress.add_argument("id", type=int)
     # mark-done
     task_mark_done = subparsers.add_parser("mark-done")
-    task_mark_done.add_argument("id")
+    task_mark_done.add_argument("id", type=int)
     # list
     task_lister = subparsers.add_parser("list")
     task_lister.add_argument("status", default=None)
