@@ -109,9 +109,11 @@ def main():
     # mark-in-progress
     task_mark_in_progress = subparsers.add_parser("mark-in-progress")
     task_mark_in_progress.add_argument("id", type=int)
+    task_mark_in_progress.set_defaults(which="mark-in-progress")
     # mark-done
     task_mark_done = subparsers.add_parser("mark-done")
     task_mark_done.add_argument("id", type=int)
+    task_mark_done.set_defaults(which="mark-done")
     # list
     task_lister = subparsers.add_parser("list")
     task_lister.add_argument("status", default=None)
