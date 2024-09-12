@@ -28,16 +28,9 @@ class Task:
             task_dict.get("updatedAt"),
         )
 
-    def _update_timestamp(self):
+    def update(self, update_field, update_value):
+        setattr(self, update_field, update_value)
         self.updated_at = utils.get_iso_datetime()
-
-    def update_description(self, description):
-        self.description = description
-        self._update_timestamp()
-
-    def update_status(self, status):
-        self.status = status
-        self._update_timestamp()
 
     def to_dict(self):
         return {
@@ -69,22 +62,19 @@ class TasksFile:
         self._save()
         return task_dict
 
-    # TODO: mege update by descrpition and status
-    def update_task_description(self, _id, description):
+    def _update_task(self, _id, update_field, update_value):
         task = self._get_task_by_id(_id)
-        task.update_description(description)
-        task_dict = task.to_dict()
-        self.tasks[str(_id)] = task_dict
+        task.update(update_field, update_value)
+        updated_task_dict = task.to_dict()
+        self.tasks[str(_id)] = updated_task_dict
         self._save()
-        return task_dict
+        return updated_task_dict
+
+    def update_task_description(self, _id, description):
+        return self._update_task(_id, "description", description)
 
     def update_task_status(self, _id, status):
-        task = self._get_task_by_id(_id)
-        task.update_status(status)
-        updated_task = task.to_dict()
-        self.tasks[str(_id)] = updated_task
-        self._save()
-        return updated_task
+        return self._update_task(_id, "status", status)
 
     def delete_task(self, _id):
         del self.tasks[str(_id)]
