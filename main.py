@@ -116,7 +116,7 @@ def main():
     task_mark_done.set_defaults(which="mark-done")
     # list
     task_lister = subparsers.add_parser("list")
-    task_lister.add_argument("status", default=None)
+    task_lister.add_argument("status", nargs="?", type=str)
     task_lister.set_defaults(which="list")
 
     args = parser.parse_args()
