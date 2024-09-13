@@ -81,7 +81,7 @@ class TasksFile:
     def delete_task(self, _id):
         del self.tasks[str(_id)]
         self._save()
-        return f"Task of id {_id} deleted from {self.filename}."
+        return f"Task deleted successfully (ID: {_id})"
 
     def list_tasks_by_status(self, status):
         return [
