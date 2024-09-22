@@ -11,7 +11,7 @@ JSON_FILEPATH = os.path.join(os.curdir, JSON_FILENAME)
 
 def main(json_filepath=JSON_FILEPATH):
     parser = argparse.ArgumentParser(
-        prog="task-cli", description="To-do list cli application"
+        prog="tasks", description="To-do list cli application"
     )
     parser.set_defaults(which=None)
     subparsers = parser.add_subparsers()

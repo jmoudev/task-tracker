@@ -1,4 +1,4 @@
-APP=task-cli
+APP=tasks
 PYTHON=python
 LINTER=ruff
 TYPE_CHECKER=mypy
