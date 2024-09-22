@@ -2,7 +2,7 @@
 name = "task-tracker"
 version = "0.1.0"
 description = "A CLI todo list app"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
 ]
