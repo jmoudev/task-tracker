@@ -10,9 +10,15 @@ Metadata = dict[str, int]
 TaskDict = TypedDict(
     "TaskDict",
     {"id": int, "description": str, "status": str, "createdAt": str, "updatedAt": str},
+    total=False,
 )
 Tasks = dict[str, TaskDict]
 TasksJson = TypedDict("TasksJson", {"metadata": Metadata, "tasks": Tasks}, total=False)
+
+
+class TaskKeyError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
 
 
 class Task:
@@ -82,8 +88,11 @@ class TasksFile:
         self.metadata: Metadata = tasks_json.get("metadata", {})
         self.tasks: Tasks = tasks_json.get("tasks", {})
 
-    def _get_task_by_id(self, _id):
-        return Task.from_dict(self.tasks[str(_id)])
+    def _get_task_by_id(self, _id: int) -> Task | TaskKeyError:
+        try:
+            return Task.from_dict(self.tasks[str(_id)])
+        except KeyError:
+            raise TaskKeyError(f"Task of ID: {_id} does not exist")
 
     def add_task(self, description: str) -> TaskDict:
         """Add a task to the tasks file."""
@@ -110,9 +119,14 @@ class TasksFile:
         """Update a tasks status in the tasks file."""
         return self._update_task(_id, "status", status)
 
-    def delete_task(self, _id: int) -> str:
+    def delete_task(self, _id: int) -> str | TaskKeyError:
         """Delete a task from the task file."""
-        del self.tasks[str(_id)]
+        try:
+            del self.tasks[str(_id)]
+        except KeyError:
+            raise TaskKeyError(
+                f"Task delete unsuccessful. Task of ID: {_id} does not exist"
+            )
         self._save()
         return f"Task deleted successfully (ID: {_id})"
 
