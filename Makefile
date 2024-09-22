@@ -1,21 +1,30 @@
+APP=task-cli
 PYTHON=python
+LINTER=ruff
+TYPE_CHECKER=mypy
 
-.PHONY: help
+.PHONY: help install install-dev lint type-check test
+
 help:
 	@echo "Printing helpers"
-	task-cli --help
+	$(APP) --help
 
-.PHONY: install
 install:
 	@echo "Installing project"
 	$(PYTHON) -m pip install .
 
-.PHONY: install-dev
 install-dev:
 	@echo "Installing project in dev mode"
-	pre-commit install
 	$(PYTHON) -m pip install -e .[dev]
+	pre-commit install
 
-.PHONY: test
+lint:
+	@echo "something"
+	$(LINTER) format .
+
+type-check:
+	@echo "type checking"
+	$(TYPE_CHECKER) .
+
 test:
 	$(PYTHON) -m unittest discover tests

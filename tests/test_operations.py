@@ -78,7 +78,9 @@ class TestTaskUpdate(TestWithPredefinedTasks):
         # update 1
         task_update_file_1 = utils.read_json(self.tasks_json_filepath)
         self.assertEqual(task_update_file_1["tasks"]["1"]["id"], 1)
-        self.assertEqual(task_update_file_1["tasks"]["1"]["description"], "An updated task")
+        self.assertEqual(
+            task_update_file_1["tasks"]["1"]["description"], "An updated task"
+        )
         self.assertGreater(
             task_update_file_1["tasks"]["1"]["updatedAt"],
             task_update_file_0["tasks"]["1"]["updatedAt"],
@@ -102,15 +104,15 @@ class TestTaskDelete(TestWithPredefinedTasks):
 class TestTasksMarkStatus(TestWithPredefinedTasks):
     def test_task_mark_in_progress(self):
         # pre mark in-progress
-        task_mark_in_progress_task_0 = utils.read_json(self.tasks_json_filepath)["tasks"][
-            "1"
-        ]
+        task_mark_in_progress_task_0 = utils.read_json(self.tasks_json_filepath)[
+            "tasks"
+        ]["1"]
         self.assertEqual(task_mark_in_progress_task_0["status"], "todo")
         # mark in-progress 1
         self.tasks_file.update_task_status(1, "in-progress")
-        task_mark_in_progress_task_1 = utils.read_json(self.tasks_json_filepath)["tasks"][
-            "1"
-        ]
+        task_mark_in_progress_task_1 = utils.read_json(self.tasks_json_filepath)[
+            "tasks"
+        ]["1"]
         self.assertEqual(task_mark_in_progress_task_1["status"], "in-progress")
         self.assertGreater(
             task_mark_in_progress_task_1["updatedAt"],
@@ -119,9 +121,7 @@ class TestTasksMarkStatus(TestWithPredefinedTasks):
 
     def test_task_mark_done(self):
         # pre mark done
-        task_mark_done_task_0 = utils.read_json(self.tasks_json_filepath)["tasks"][
-            "1"
-        ]
+        task_mark_done_task_0 = utils.read_json(self.tasks_json_filepath)["tasks"]["1"]
         self.assertEqual(task_mark_done_task_0["status"], "todo")
         # mark done 1
         self.tasks_file.update_task_status(1, "done")
