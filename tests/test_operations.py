@@ -2,8 +2,8 @@ import os
 import tempfile
 import unittest
 
-import main
-import utils
+import task_tracker.main as main
+import task_tracker.utils as utils
 
 
 class TestTaskOperation(unittest.TestCase):

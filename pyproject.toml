@@ -8,7 +8,7 @@ classifiers = [
 ]
 
 [project.scripts]
-task-cli = "main:main"
+task-cli = "task_tracker.main:main"
 
 [project.optional-dependencies]
 dev = [
