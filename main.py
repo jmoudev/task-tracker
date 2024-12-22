@@ -120,17 +120,17 @@ def main():
 
     match args.which:
         case "add":
-            return add_task(args.description)
+            return add_task(JSON_FILEPATH, args.description)
         case "update":
-            return update_task(args.id, args.description)
+            return update_task(JSON_FILEPATH, args.id, args.description)
         case "delete":
-            return delete_task(args.id)
+            return delete_task(JSON_FILEPATH, args.id)
         case "mark-in-progress":
-            return mark_task_status(args.id, "in-progress")
+            return mark_task_status(JSON_FILEPATH, args.id, "in-progress")
         case "mark-done":
-            return mark_task_status(args.id, "done")
+            return mark_task_status(JSON_FILEPATH, args.id, "done")
         case "list":
-            return list_tasks(args.status)
+            return list_tasks(JSON_FILEPATH, args.status)
     return
 
 
