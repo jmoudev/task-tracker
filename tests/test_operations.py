@@ -7,12 +7,12 @@ import task_tracker.tasks as tasks
 
 
 class TestTaskOperation(unittest.TestCase):
-    TASKS_JSON_FILENAME = "tasks.json"
+    tasks_json_filename = "tasks.json"
 
     def setUp(self):
         self.tempdir = tempfile.TemporaryDirectory()
         self.tasks_json_filepath = os.path.join(
-            self.tempdir.name, self.TASKS_JSON_FILENAME
+            self.tempdir.name, self.tasks_json_filename
         )
         utils.create_tasks_json(self.tasks_json_filepath)
         self.tasks_file = tasks.TasksFile(self.tasks_json_filepath)
@@ -46,7 +46,7 @@ class TestWithPredefinedTasks(TestTaskOperation):
     def setUp(self):
         self.tempdir = tempfile.TemporaryDirectory()
         self.tasks_json_filepath = os.path.join(
-            self.tempdir.name, self.TASKS_JSON_FILENAME
+            self.tempdir.name, self.tasks_json_filename
         )
         utils.write_json(
             self.tasks_json_filepath,
@@ -145,7 +145,7 @@ class TestWithPredefinedMarkedTasks(TestTaskOperation):
     def setUp(self):
         self.tempdir = tempfile.TemporaryDirectory()
         self.tasks_json_filepath = os.path.join(
-            self.tempdir.name, self.TASKS_JSON_FILENAME
+            self.tempdir.name, self.tasks_json_filename
         )
         utils.write_json(
             self.tasks_json_filepath,
