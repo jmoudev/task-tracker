@@ -2,62 +2,12 @@ import argparse
 import os
 import pprint
 
+import task_tracker.tasks as tasks
 import task_tracker.utils as utils
 
 
 JSON_FILENAME = "tasks.json"
 JSON_FILEPATH = os.path.join(os.curdir, JSON_FILENAME)
-
-
-def add_task(json_filepath, description):
-    tasks_json = utils.read_json(json_filepath)
-    _id = tasks_json["metadata"]["num_tasks"] + 1
-    created_timestamp = utils.get_iso_datetime()
-    tasks_json["metadata"]["num_tasks"] += 1
-    # json writes dict keys as str
-    task = {
-        "id": _id,
-        "description": description,
-        "status": "todo",
-        "createdAt": created_timestamp,
-        "updatedAt": created_timestamp,
-    }
-    tasks_json["tasks"][str(_id)] = task
-    utils.write_json(json_filepath, tasks_json)
-    return task
-
-
-def update_task(json_filepath, _id, description):
-    tasks_json = utils.read_json(json_filepath)
-    task = tasks_json["tasks"][str(_id)]
-    task["description"] = description
-    task["updatedAt"] = utils.get_iso_datetime()
-    utils.write_json(json_filepath, tasks_json)
-    return task
-
-
-def delete_task(json_filepath, _id):
-    tasks_json = utils.read_json(json_filepath)
-    del tasks_json["tasks"][str(_id)]
-    utils.write_json(json_filepath, tasks_json)
-    return f"Task of id {_id} deleted from {JSON_FILENAME}."
-
-
-def mark_task_status(json_filepath, _id, status):
-    tasks_json = utils.read_json(json_filepath)
-    task = tasks_json["tasks"][str(_id)]
-    task["status"] = status
-    task["updatedAt"] = utils.get_iso_datetime()
-    utils.write_json(json_filepath, tasks_json)
-    return task
-
-
-def list_tasks(json_filepath, status):
-    tasks_json = utils.read_json(json_filepath)
-    tasks_list = tasks_json["tasks"]
-    if status:
-        tasks_list = [task for task in tasks_list if task["status"] == status]
-    return tasks_list
 
 
 def main(json_filepath=JSON_FILEPATH):
@@ -92,24 +42,38 @@ def main(json_filepath=JSON_FILEPATH):
     task_mark_done.set_defaults(which="mark-done")
 
     task_lister = subparsers.add_parser("list")
-    task_lister.add_argument("status", nargs="?", type=str)
+    task_lister.add_argument(
+        "status", nargs="?", type=str, choices=["todo", "in-progress", "done"]
+    )
     task_lister.set_defaults(which="list")
 
     args = parser.parse_args()
 
     match args.which:
         case "add":
-            pprint.pprint(add_task(json_filepath, args.description))
+            pprint.pprint(tasks.TasksFile(json_filepath).add_task(args.description))
         case "update":
-            pprint.pprint(update_task(json_filepath, args.id, args.description))
+            pprint.pprint(
+                tasks.TasksFile(json_filepath).update_task_description(
+                    args.id, args.description
+                )
+            )
         case "delete":
-            print(delete_task(json_filepath, args.id))
+            pprint.pprint(tasks.TasksFile(json_filepath).delete_task(args.id))
         case "mark-in-progress":
-            pprint.pprint(mark_task_status(json_filepath, args.id, "in-progress"))
+            pprint.pprint(
+                tasks.TasksFile(json_filepath).update_task_status(
+                    args.id, "in-progress"
+                )
+            )
         case "mark-done":
-            pprint.pprint(mark_task_status(json_filepath, args.id, "done"))
+            pprint.pprint(
+                tasks.TasksFile(json_filepath).update_task_status(args.id, "done")
+            )
         case "list":
-            pprint.pprint(list_tasks(json_filepath, args.status))
+            pprint.pprint(
+                tasks.TasksFile(json_filepath).list_tasks_by_status(args.status)
+            )
         case None:
             parser.print_help()
 
