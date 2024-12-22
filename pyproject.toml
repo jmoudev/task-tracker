@@ -1,6 +1,6 @@
 [project]
 name = "task-tracker"
-version = "0.1.0"
+version = "0.1.1"
 description = "A CLI todo list app"
 requires-python = ">=3.10"
 classifiers = [
