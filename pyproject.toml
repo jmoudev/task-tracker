@@ -13,5 +13,6 @@ tasks = "task_tracker.main:main"
 [project.optional-dependencies]
 dev = [
     "pre-commit",
+    "mypy",
     "ruff",
 ]

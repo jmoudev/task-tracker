@@ -56,12 +56,14 @@ class TestWithPredefinedTasks(TestTaskOperation):
                         "id": 1,
                         "description": "A task",
                         "status": "todo",
+                        "createdAt": utils.get_iso_datetime(),
                         "updatedAt": utils.get_iso_datetime(),
                     },
                     "2": {
                         "id": 2,
                         "description": "Another task",
                         "status": "todo",
+                        "createdAt": utils.get_iso_datetime(),
                         "updatedAt": utils.get_iso_datetime(),
                     },
                 }
@@ -99,6 +101,13 @@ class TestTaskDelete(TestWithPredefinedTasks):
         task_delete_tasks_2 = utils.read_json(self.tasks_json_filepath)["tasks"]
         self.assertEqual(task_delete_output_2, "Task deleted successfully (ID: 2)")
         self.assertEqual(len(task_delete_tasks_2), 0)
+
+    def test_task_delete_unsuccessful(self):
+        # delete 1
+        self.tasks_file.delete_task(1)
+        # delete 1 expecting failure
+        with self.assertRaises(tasks.TaskKeyError):
+            self.tasks_file.delete_task(1)
 
 
 class TestTasksMarkStatus(TestWithPredefinedTasks):
