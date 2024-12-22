@@ -4,7 +4,7 @@ The list of commands and their usage is given below:
 
 ### Adding tasks
 ```
-task-cli add "Buy groceries"
+tasks add "Buy groceries"
 
 # Output:
 {
@@ -19,7 +19,7 @@ task-cli add "Buy groceries"
 ### Updating tasks
 ```
 # by description
-task-cli update 1 "Buy groceries and cook dinner"
+tasks update 1 "Buy groceries and cook dinner"
 
 # Output:
 {
@@ -31,7 +31,7 @@ task-cli update 1 "Buy groceries and cook dinner"
 }
 
 # by status 'in-progress'
-task-cli mark-in-progress 1
+tasks mark-in-progress 1
 
 # Output (subset):
 {   
@@ -43,7 +43,7 @@ task-cli mark-in-progress 1
 
 
 # by status 'done'
-task-cli mark-done 1
+tasks mark-done 1
 
 # Output (subset):
 {
@@ -56,7 +56,7 @@ task-cli mark-done 1
 
 ### Deleting tasks
 ```
-task-cli delete 1
+tasks delete 1
 
 # Output: Task deleted successfully (ID: 1)
 ```
@@ -65,7 +65,7 @@ task-cli delete 1
 ```
 # List all
 
-task-cli list
+tasks list
 
 # Output (subset):
 [
@@ -85,7 +85,7 @@ task-cli list
 
 # List by status 'in-progress'
 
-task-cli list in-progress
+tasks list in-progress
 
 # Output (subset):
 [
