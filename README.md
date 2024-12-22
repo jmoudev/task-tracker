@@ -16,7 +16,7 @@ task-cli add "Buy groceries"
 }
 ```
 
-#### Updating tasks
+### Updating tasks
 ```
 # by description
 task-cli update 1 "Buy groceries and cook dinner"
