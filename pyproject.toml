@@ -13,5 +13,4 @@ task-cli = "main:main"
 [project.optional-dependencies]
 dev = [
     "pre-commit",
-    "ruff",
 ]
