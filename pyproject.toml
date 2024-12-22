@@ -13,4 +13,5 @@ task-cli = "task_tracker.main:main"
 [project.optional-dependencies]
 dev = [
     "pre-commit",
+    "ruff",
 ]
