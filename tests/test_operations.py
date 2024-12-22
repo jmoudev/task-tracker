@@ -15,32 +15,31 @@ class TestTaskOperation(unittest.TestCase):
             self.tempdir.name, self.TASKS_JSON_FILENAME
         )
         utils.create_tasks_json(self.tasks_json_filepath)
-        return
+        self.tasks_file = tasks.TasksFile(self.tasks_json_filepath)
 
     def tearDown(self):
         self.tempdir.cleanup()
-        return
 
 
 class TestTaskAdd(TestTaskOperation):
     def test_task_add(self):
-        # test add task 1
-        tasks_file = tasks.TasksFile(self.tasks_json_filepath)
-        tasks_file.add_task("A task")
-        tasks_json = utils.read_json(self.tasks_json_filepath)
-        self.assertEqual(tasks_json["metadata"]["task_counter"], 1)
-        self.assertEqual(len(tasks_json["tasks"]), 1)
-        self.assertEqual(tasks_json["tasks"]["1"]["id"], 1)
-        self.assertEqual(tasks_json["tasks"]["1"]["description"], "A task")
-        self.assertEqual(tasks_json["tasks"]["1"]["status"], "todo")
-        # test add task 2
-        tasks_file.add_task("Another task")
-        tasks_json = utils.read_json(self.tasks_json_filepath)
-        self.assertEqual(tasks_json["metadata"]["task_counter"], 2)
-        self.assertEqual(len(tasks_json["tasks"]), 2)
-        self.assertEqual(tasks_json["tasks"]["2"]["id"], 2)
-        self.assertEqual(tasks_json["tasks"]["2"]["description"], "Another task")
-        return
+        # add 1
+        self.tasks_file.add_task("A task")
+        task_add_file_1 = utils.read_json(self.tasks_json_filepath)
+        task_add_tasks_1 = task_add_file_1["tasks"]
+        self.assertEqual(task_add_file_1["metadata"]["task_counter"], 1)
+        self.assertEqual(len(task_add_tasks_1), 1)
+        self.assertEqual(task_add_tasks_1["1"]["id"], 1)
+        self.assertEqual(task_add_tasks_1["1"]["description"], "A task")
+        self.assertEqual(task_add_tasks_1["1"]["status"], "todo")
+        # add 2
+        self.tasks_file.add_task("Another task")
+        task_add_2_file = utils.read_json(self.tasks_json_filepath)
+        task_add_2_tasks = task_add_2_file["tasks"]
+        self.assertEqual(task_add_2_file["metadata"]["task_counter"], 2)
+        self.assertEqual(len(task_add_2_tasks), 2)
+        self.assertEqual(task_add_2_tasks["2"]["id"], 2)
+        self.assertEqual(task_add_2_tasks["2"]["description"], "Another task")
 
 
 class TestWithPredefinedTasks(TestTaskOperation):
@@ -68,69 +67,69 @@ class TestWithPredefinedTasks(TestTaskOperation):
                 }
             },
         )
-        return
+        self.tasks_file = tasks.TasksFile(self.tasks_json_filepath)
 
 
 class TestTaskUpdate(TestWithPredefinedTasks):
     def test_task_update(self):
-        tasks_file = tasks.TasksFile(self.tasks_json_filepath)
-        # test update task
-        tasks_json_pre_update = utils.read_json(self.tasks_json_filepath)
-        tasks_file.update_task_description(1, "An updated task")
-        tasks_json = utils.read_json(self.tasks_json_filepath)
-        self.assertEqual(tasks_json["tasks"]["1"]["id"], 1)
-        self.assertEqual(tasks_json["tasks"]["1"]["description"], "An updated task")
+        # pre update
+        task_update_file_0 = utils.read_json(self.tasks_json_filepath)
+        self.tasks_file.update_task_description(1, "An updated task")
+        # update 1
+        task_update_file_1 = utils.read_json(self.tasks_json_filepath)
+        self.assertEqual(task_update_file_1["tasks"]["1"]["id"], 1)
+        self.assertEqual(task_update_file_1["tasks"]["1"]["description"], "An updated task")
         self.assertGreater(
-            tasks_json["tasks"]["1"]["updatedAt"],
-            tasks_json_pre_update["tasks"]["1"]["updatedAt"],
+            task_update_file_1["tasks"]["1"]["updatedAt"],
+            task_update_file_0["tasks"]["1"]["updatedAt"],
         )
-        return
 
 
 class TestTaskDelete(TestWithPredefinedTasks):
     def test_task_delete(self):
-        tasks_file = tasks.TasksFile(self.tasks_json_filepath)
-        # test delete task
-        tasks_json_pre_delete = utils.read_json(self.tasks_json_filepath)
-        tasks_file.delete_task(1)
-        tasks_json = utils.read_json(self.tasks_json_filepath)
-        self.assertEqual(len(tasks_json_pre_delete["tasks"]), 2)
-        self.assertEqual(len(tasks_json["tasks"]), 1)
-        tasks_file.delete_task(2)
-        return
+        # delete 1
+        task_delete_output_1 = self.tasks_file.delete_task(1)
+        task_delete_tasks_1 = utils.read_json(self.tasks_json_filepath)["tasks"]
+        self.assertEqual(task_delete_output_1, "Task deleted successfully (ID: 1)")
+        self.assertEqual(len(task_delete_tasks_1), 1)
+        # delete 2
+        task_delete_output_2 = self.tasks_file.delete_task(2)
+        task_delete_tasks_2 = utils.read_json(self.tasks_json_filepath)["tasks"]
+        self.assertEqual(task_delete_output_2, "Task deleted successfully (ID: 2)")
+        self.assertEqual(len(task_delete_tasks_2), 0)
 
 
 class TestTasksMarkStatus(TestWithPredefinedTasks):
     def test_task_mark_in_progress(self):
-        tasks_file = tasks.TasksFile(self.tasks_json_filepath)
-        task_without_marked_status = utils.read_json(self.tasks_json_filepath)["tasks"][
+        # pre mark in-progress
+        task_mark_in_progress_task_0 = utils.read_json(self.tasks_json_filepath)["tasks"][
             "1"
         ]
-        tasks_file.update_task_status(1, "in-progress")
-        task_marked_in_progress = utils.read_json(self.tasks_json_filepath)["tasks"][
+        self.assertEqual(task_mark_in_progress_task_0["status"], "todo")
+        # mark in-progress 1
+        self.tasks_file.update_task_status(1, "in-progress")
+        task_mark_in_progress_task_1 = utils.read_json(self.tasks_json_filepath)["tasks"][
             "1"
         ]
-        self.assertEqual(task_without_marked_status["status"], "todo")
-        self.assertEqual(task_marked_in_progress["status"], "in-progress")
+        self.assertEqual(task_mark_in_progress_task_1["status"], "in-progress")
         self.assertGreater(
-            task_marked_in_progress["updatedAt"],
-            task_without_marked_status["updatedAt"],
+            task_mark_in_progress_task_1["updatedAt"],
+            task_mark_in_progress_task_0["updatedAt"],
         )
-        return
 
     def test_task_mark_done(self):
-        tasks_file = tasks.TasksFile(self.tasks_json_filepath)
-        task_without_marked_status = utils.read_json(self.tasks_json_filepath)["tasks"][
+        # pre mark done
+        task_mark_done_task_0 = utils.read_json(self.tasks_json_filepath)["tasks"][
             "1"
         ]
-        tasks_file.update_task_status(1, "done")
-        task_marked_done = utils.read_json(self.tasks_json_filepath)["tasks"]["1"]
-        self.assertEqual(task_without_marked_status["status"], "todo")
-        self.assertEqual(task_marked_done["status"], "done")
+        self.assertEqual(task_mark_done_task_0["status"], "todo")
+        # mark done 1
+        self.tasks_file.update_task_status(1, "done")
+        task_mark_done_task_1 = utils.read_json(self.tasks_json_filepath)["tasks"]["1"]
+        self.assertEqual(task_mark_done_task_1["status"], "done")
         self.assertGreater(
-            task_marked_done["updatedAt"], task_without_marked_status["updatedAt"]
+            task_mark_done_task_1["updatedAt"], task_mark_done_task_0["updatedAt"]
         )
-        return
 
 
 class TestWithPredefinedMarkedTasks(TestTaskOperation):
@@ -156,12 +155,11 @@ class TestWithPredefinedMarkedTasks(TestTaskOperation):
                 }
             },
         )
-        return
+        self.tasks_file = tasks.TasksFile(self.tasks_json_filepath)
 
 
 class TestTasksList(TestWithPredefinedMarkedTasks):
     def test_tasks_list(self):
-        tasks_file = tasks.TasksFile(self.tasks_json_filepath)
         expected_tasks_list = [
             {
                 "id": 1,
@@ -174,12 +172,11 @@ class TestTasksList(TestWithPredefinedMarkedTasks):
                 "status": "done",
             },
         ]
-        tasks_list = tasks_file.list_tasks_by_status(None)
-        self.assertListEqual(tasks_list, expected_tasks_list)
-        return
+        # list all 1
+        tasks_list_output = self.tasks_file.list_tasks_by_status(None)
+        self.assertListEqual(tasks_list_output, expected_tasks_list)
 
     def test_tasks_list_by_status(self):
-        tasks_file = tasks.TasksFile(self.tasks_json_filepath)
         expected_tasks_list = [
             {
                 "id": 2,
@@ -187,9 +184,9 @@ class TestTasksList(TestWithPredefinedMarkedTasks):
                 "status": "done",
             }
         ]
-        tasks_list = tasks_file.list_tasks_by_status("done")
-        self.assertListEqual(tasks_list, expected_tasks_list)
-        return
+        # list done 1
+        tasks_list_done_output = self.tasks_file.list_tasks_by_status("done")
+        self.assertListEqual(tasks_list_done_output, expected_tasks_list)
 
 
 if __name__ == "__main__":
