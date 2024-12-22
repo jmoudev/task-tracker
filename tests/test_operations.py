@@ -55,11 +55,13 @@ class TestWithPredefinedTasks(TestTaskOperation):
                         "id": 1,
                         "description": "A task",
                         "status": "todo",
+                        "updatedAt": main.get_iso_datetime()
                     },
                     {
                         "id": 2,
                         "description": "Another task",
                         "status": "todo",
+                        "updatedAt": main.get_iso_datetime()
                     },
                 ]
             },
@@ -70,10 +72,12 @@ class TestWithPredefinedTasks(TestTaskOperation):
 class TestTaskUpdate(TestWithPredefinedTasks):
     def test_task_update(self):
         # test update task
+        tasks_json_pre_update = main.read_json(self.tasks_json_filepath)
         main.update_task(self.tasks_json_filepath, 1, "An updated task")
         tasks_json = main.read_json(self.tasks_json_filepath)
         self.assertEqual(tasks_json["tasks"][0]["id"], 1)
         self.assertEqual(tasks_json["tasks"][0]["description"], "An updated task")
+        self.assertGreater(tasks_json["tasks"][0]["updatedAt"], tasks_json_pre_update["tasks"][0]["updatedAt"])
         return
 
 
@@ -98,6 +102,7 @@ class TestTasksMarkStatus(TestWithPredefinedTasks):
         task_marked_in_progress = main.read_json(self.tasks_json_filepath)["tasks"][0]
         self.assertEqual(task_without_marked_status["status"], "todo")
         self.assertEqual(task_marked_in_progress["status"], "in-progress")
+        self.assertGreater(task_marked_in_progress["updatedAt"], task_without_marked_status["updatedAt"])
         return
 
     def test_task_mark_done(self):
@@ -108,6 +113,7 @@ class TestTasksMarkStatus(TestWithPredefinedTasks):
         task_marked_done = main.read_json(self.tasks_json_filepath)["tasks"][0]
         self.assertEqual(task_without_marked_status["status"], "todo")
         self.assertEqual(task_marked_done["status"], "done")
+        self.assertGreater(task_marked_done["updatedAt"], task_without_marked_status["updatedAt"])
         return
 
 
