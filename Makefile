@@ -1,30 +1,36 @@
 APP=tasks
+UV=uv
+RUN=$(UV) run
 PYTHON=python
-LINTER=ruff
-TYPE_CHECKER=mypy
+LINT=ruff
+TYPE_CHECK=mypy
 
-.PHONY: help install install-dev lint type-check test
+.PHONY: help install install-dev lint type-check test test-all
 
 help:
 	@echo "Printing helpers"
-	$(APP) --help
+	$(RUN) $(APP) --help
 
+# TODO: Install a only the project of packages, and necessary deps
 install:
 	@echo "Installing project"
-	$(PYTHON) -m pip install .
+	$(UV) sync
 
 install-dev:
 	@echo "Installing project in dev mode"
-	$(PYTHON) -m pip install -e .[dev]
-	pre-commit install
+	$(UV) sync --group dev
+	$(RUN) pre-commit install
 
 lint:
-	@echo "something"
-	$(LINTER) format .
+	@echo "Linting"
+	$(RUN) --group lint $(LINT) format .
 
 type-check:
-	@echo "type checking"
-	$(TYPE_CHECKER) .
+	@echo "Type checking"
+	$(RUN) --group type $(TYPE_CHECK) .
 
 test:
-	$(PYTHON) -m unittest discover tests
+	$(RUN) --group test pytest
+
+test-all:
+	$(RUN) --group test tox run-parallel

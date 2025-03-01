@@ -1,6 +1,9 @@
+[build-system]
+requires = ["setuptools"]
+
 [project]
 name = "task-tracker"
-version = "0.1.1"
+version = "0.1.2"
 description = "A CLI todo list app"
 requires-python = ">=3.10"
 classifiers = [
@@ -10,9 +13,21 @@ classifiers = [
 [project.scripts]
 tasks = "task_tracker.main:main"
 
-[project.optional-dependencies]
+[dependency-groups]
+test = [
+    "pytest>=8.3.4",
+    "tox>=4.24.1",
+    "tox-uv>=1.25.0",
+]
+lint = [
+    "ruff>=0.9.9",
+]
+type = [
+    "mypy>=1.15.0",
+]
 dev = [
-    "pre-commit",
-    "mypy",
-    "ruff",
+    "pre-commit>=4.1.0",
+    { include-group = "test" },
+    { include-group = "lint" },
+    { include-group = "type" },
 ]
