@@ -1,0 +1,15 @@
+env_list =  ["lint", "3.12"]
+
+[env.lint]
+description = "Install lint extras and linting on repository"
+extras = lint
+skip_install = true
+commands = [[ "ruff", "check", "." ]]
+
+[env."3.12"]
+description = "install pytest in a virtual environment and invoke it on the tests folder"
+deps = [
+    "pytest>=7",
+    "pytest-sugar",
+]
+commands = [[ "pytest", "tests", { replace = "posargs", extend = true} ]]

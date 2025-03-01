@@ -70,7 +70,23 @@ class Task:
         }
 
 
-class TasksFile:
+class BaseTasksFile:
+    """Class for base operations to the tasks JSON file."""
+
+    def __init__(self, filepath: str):
+        self.filepath = filepath
+        if not os.path.isfile(filepath):
+            self.tasks_json: TasksJson = {}
+        else:
+            self.tasks_json = utils.read_json(filepath)
+        self.metadata: Metadata = self.tasks_json.get("metadata", {})
+
+    def save(self):
+        tasks_obj = {"metadata": self.metadata, "tasks": self.tasks}
+        utils.write_json(self.filepath, tasks_obj)
+
+
+class TasksFile(BaseTasksFile):
     """Class for reading / modifying the task json file.
 
     Attributes:
@@ -80,13 +96,8 @@ class TasksFile:
     """
 
     def __init__(self, filepath: str):
-        self.filepath = filepath
-        if not os.path.isfile(filepath):
-            tasks_json: TasksJson = {}
-        else:
-            tasks_json = utils.read_json(filepath)
-        self.metadata: Metadata = tasks_json.get("metadata", {})
-        self.tasks: Tasks = tasks_json.get("tasks", {})
+        super().__init__(filepath)
+        self.tasks: Tasks = self.tasks_json.get("tasks", {})
 
     def _get_task_by_id(self, _id: int) -> Task | TaskKeyError:
         try:
@@ -100,7 +111,7 @@ class TasksFile:
         task_dict = Task(task_id, description).to_dict()
         self.tasks[str(task_id)] = task_dict
         self.metadata["task_counter"] = task_id
-        self._save()
+        self.save()
         return task_dict
 
     def _update_task(self, _id, update_field, update_value):
@@ -108,7 +119,7 @@ class TasksFile:
         task.update(update_field, update_value)
         updated_task_dict = task.to_dict()
         self.tasks[str(_id)] = updated_task_dict
-        self._save()
+        self.save()
         return updated_task_dict
 
     def update_task_description(self, _id: int, description: str) -> TaskDict:
@@ -127,7 +138,7 @@ class TasksFile:
             raise TaskKeyError(
                 f"Task delete unsuccessful. Task of ID: {_id} does not exist"
             )
-        self._save()
+        self.save()
         return f"Task deleted successfully (ID: {_id})"
 
     def list_tasks_by_status(self, status: str | None) -> list[TaskDict]:
@@ -137,7 +148,3 @@ class TasksFile:
             for task in self.tasks.values()
             if not status or task["status"] == status
         ]
-
-    def _save(self):
-        tasks_obj = {"metadata": self.metadata, "tasks": self.tasks}
-        utils.write_json(self.filepath, tasks_obj)
