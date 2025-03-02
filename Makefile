@@ -20,14 +20,14 @@ dev:
 
 lint:
 	@echo "Linting"
-	$(RUN) --group lint ruff check . --fix $@
+	$(RUN) --group lint ruff check . --fix
 
 type-check:
 	@echo "Type checking"
-	$(RUN) --group type mypy . $@
+	$(RUN) --group type mypy .
 
 test:
-	$(RUN) --group test pytest $@
+	$(RUN) --group test pytest test
 
 test-all:
-	$(RUN) --group test tox run-parallel $@
+	$(RUN) --group test tox run-parallel
