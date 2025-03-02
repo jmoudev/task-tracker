@@ -27,7 +27,7 @@ type-check:
 	$(RUN) --group type mypy .
 
 test:
-	$(RUN) --group test pytest test
+	$(RUN) --group test pytest --cov=src tests
 
 test-all:
 	$(RUN) --group test tox run-parallel
