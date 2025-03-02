@@ -2,6 +2,33 @@ Project url: https://roadmap.sh/projects/task-tracker
 
 A simple command line interface to track tasks.
 
+## Setup
+
+### Pre-requisites
+
+This project requires Python >= 3.10, and uv.
+
+### Installation
+
+To install, clone the project and run the **make install** rule:
+
+```bash
+git clone https://github.com/jmoudev/task-tracker.git
+cd task-tracker
+
+make install
+```
+
+If **GNU Make** is unavailable, repeat the steps outlined for install in the Makefile.
+
+## Usage
+
+Once the project is installed, source the project venv to access the command script (bash/zsh example):
+
+```bash
+source .venv/bin/activate
+```
+
 The list of commands and their usage is given below:
 
 ### Adding tasks
